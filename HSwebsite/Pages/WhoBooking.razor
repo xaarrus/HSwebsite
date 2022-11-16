@@ -1,0 +1,557 @@
+﻿@page "/whobooking"
+
+<Title> Варианты размещения </Title>
+
+<div class="content-block-bg">
+    <div style="text-align:center">
+        <h2>В какой номер заезжаем?</h2>
+        <p>Во всех комнатах ТОЛЬКО одноместные спальные кровати.</p>
+    </div>
+
+    <div id="filterRoom" class="row">
+        <div>
+            <h2 style="text-align:center">Фильтры</h2>
+            <div id="filterCounterMembers">
+
+                <button class="btn btn-outline-primary" @onclick="(()=>FilterCounterSet(1))" title="Номер на одного человека">
+                    <img src="/img/man.svg" height="50">
+                </button>
+
+                <button class="btn btn-outline-primary" @onclick="(()=>FilterCounterSet(2))" title="Номер до 2х человек">
+                    <img src="/img/man.svg" height="50" /><span>x2</span>
+                </button>
+
+                <button class="btn btn-outline-primary" @onclick="(()=>FilterCounterSet(3))" title="Номер до 3х человек">
+                    <img src="/img/man.svg" height="50" /><span>x3</span>
+                 </button>
+
+                <button class="btn btn-outline-primary" @onclick="(()=>FilterCounterSet(4))" title="Номер до 4х человек">
+                    <img src="/img/man.svg" height="50" /><span>x4</span>
+                </button>
+
+                <button class="btn btn-outline-primary" @onclick="(()=>FilterCounterSet(6))" title="Номер до 6х человек">
+                    <img src="/img/man.svg" height="50" /><span>x6</span>
+                </button>
+
+                <button class="btn btn-outline-primary" @onclick="(()=>FilterCounterSet(8))" title="Номер до 8х человек">
+                    <img src="/img/man.svg" height="50" /><span>x8</span>
+                </button>
+
+                <button class=@cssFilterCheck(ref boolShower) title="Душ" @onclick="()=>FilterBool(ref boolShower)">
+                    <img src="/img/shower.svg" height="50" />
+                </button>
+
+                <button class=@cssFilterCheck(ref boolBath) title="Ванна" @onclick="()=>FilterBool(ref boolBath)">
+                    <img src="/img/bath-shower-line.svg" height="50" />
+                </button>
+
+                <button class=@cssFilterCheck(ref boolBed) title="Одноместная кровать" @onclick="()=>FilterBool(ref boolBed)">
+                     <img src="/img/bed-outline.svg" height="50" />
+                </button>
+
+                <button class=@cssFilterCheck(ref boolBunkBed) title="Двухъярусная кровать" @onclick="()=>FilterBool(ref boolBunkBed)">
+                    <img src="/img/bunk-bed-outline.svg" height="50" />
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @if (ListRoom.Count < 1)
+    {
+        <p>Search room....</p>
+    }
+    else
+    {
+    <div class="row">
+        @foreach (var item in ListRoom)
+        {
+            <div class="col-md-4">
+            <div class="card">
+                <img src=@item.RoomImgUrl class="card-img-top" alt="isRoom" title="isoRoom">
+                <div class="card-body">
+                            <h5 class="card-title">
+                                Room № @item.RoomId Floor: @item.Floor
+                                @if (item.Badroom == true & item.RoomId <= 34)
+                                {
+                                    <img src="/img/toilet.svg" height="50" title="Туалет" />
+                                    <img src="/img/shower.svg" height="50" title="Душ" />
+                                }
+                                @if (item.Badroom == true & item.RoomId > 34)
+                                {
+                                    <img src="/img/toilet.svg" height="50" title="Туалет" />
+                                    <img src="/img/bath-shower-line.svg" height="50" title="Ванна" />
+                                }
+                                @if (!item.Badroom)
+                                {
+                                    <p>Toilet and shower in general room</p>
+                                }
+                                @if (item.BedList.Where(x => x.BedPlace == BookingModel.BedModel.Place.up).Count() > 0)
+                                {
+                                    <img src="/img/bunk-bed-outline.svg" height="50" title="Двухъярусная кровать" />
+                                    if ((item.BedList.Where(x => x.BedPlace == BookingModel.BedModel.Place.up).Count()) % (item.BedList.Where(x => x.BedPlace == BookingModel.BedModel.Place.down).Count()) != 0)
+                                    {
+                                        <img src="/img/bed-outline.svg" height="50" title="Одноместная кровать" />
+                                    }
+                                }
+                                @if (item.BedList.Where(x => x.BedPlace == BookingModel.BedModel.Place.up).Count() < 1)
+                                {
+                                    <img src="/img/bed-outline.svg" height="50" title="Одноместная кровать" />
+                                }
+                            </h5>
+                            @if (!string.IsNullOrEmpty(item.RoomDescription))
+                        {
+                            <p class="card-text"> @item.RoomDescription </p>
+                        }
+                        <div class="row">
+                        <div class="col-md-6">
+                            @foreach (var bedsample in item.BedList)
+                            {
+                                @if (bedsample.BedPlace == BookingModel.BedModel.Place.down)
+                                {
+                                    <p>Busy: <input class="form-check-input" type="checkbox" @bind-value=bedsample.Busy> Place: @bedsample.BedPlace</p>
+                                }
+                            }
+                            </div>
+                            <div class="col-md-6">
+                                @foreach (var bedsample in item.BedList)
+                                {
+                                    @if (bedsample.BedPlace == BookingModel.BedModel.Place.up)
+                                    {
+                                        <p>Busy: <input class="form-check-input" type="checkbox" @bind-value=bedsample.Busy> Place: @bedsample.BedPlace</p>
+                                    }
+                                }
+                                </div>
+                     </div>
+                 </div>
+            </div>
+            </div>            
+        }                
+    </div>
+    }
+</div>
+
+@code {
+    public int FilteCounterRoomMembers = 8;
+    public void FilterCounterSet(int i) => FilteCounterRoomMembers = i;
+    string cssFilterCheck(ref bool refBool)
+    {
+        if (refBool)
+        {
+            return "btn btn-primary";
+        }
+        else
+        {
+            return "btn btn-outline-primary";
+        }
+    }
+    void FilterBool(ref bool refBool)
+    {
+        refBool = !refBool;
+    }
+    bool boolShower = false;
+    bool boolBath = false;
+    bool boolBed = false;
+    bool boolBunkBed = false;
+
+    public List<BookingModel.RoomModel> ListRoom => ListRoomStorage.Where(x => x.BedList.Count() <= FilteCounterRoomMembers
+    && (boolShower == true ? (x.Badroom == true & x.RoomId <= 34) : true)
+    && (boolBath == true ? (x.Badroom == true & x.RoomId > 34) : true)
+    && (boolBed == true ? (x.BedList.Where(y => y.BedPlace == BookingModel.BedModel.Place.up).Count() < 1
+    || ((x.BedList.Where(y => y.BedPlace == BookingModel.BedModel.Place.up).Count()) % (x.BedList.Where(y => y.BedPlace == BookingModel.BedModel.Place.down).Count()) != 0)
+    ) : true)
+    && (boolBunkBed == true ? (x.BedList.Where(y=>y.BedPlace == BookingModel.BedModel.Place.up).Count() > 0) : true)
+    )
+    .ToList();
+
+    public List<BookingModel.RoomModel> ListRoomStorage = new()
+    {
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=1, Badroom=true, RoomDescription="First room desc",
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=2, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=3, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=4, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=5, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=6, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=7, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=8, Badroom=false, RoomDescription="Wooman only", Gender= BookingModel.RoomModel.GenderValue.Wooman,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/388710925.jpg?k=5a969419f802531682f21676216dc4abcfc43583b73da85774b2450035c74423&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=9, Badroom=false, Gender= BookingModel.RoomModel.GenderValue.Men,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=10, Badroom=false, Gender= BookingModel.RoomModel.GenderValue.Men,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=11, Badroom=false,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405639586.jpg?k=cc661959ad84d517d35c0791f20d275277c55a74fdda04f5d0dab77c7e7448bf&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=12, Badroom=false,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405639586.jpg?k=cc661959ad84d517d35c0791f20d275277c55a74fdda04f5d0dab77c7e7448bf&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=13, Badroom=false, Gender= BookingModel.RoomModel.GenderValue.Men,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=14, Badroom=false, Gender= BookingModel.RoomModel.GenderValue.Men,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=15, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=16, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405640982.jpg?k=089aaefe9ed2b1c024e7175586293fc3f49d6abde51636b6694dd2150b06aebc&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=17, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405640982.jpg?k=089aaefe9ed2b1c024e7175586293fc3f49d6abde51636b6694dd2150b06aebc&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=18, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405640982.jpg?k=089aaefe9ed2b1c024e7175586293fc3f49d6abde51636b6694dd2150b06aebc&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=19, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405640982.jpg?k=089aaefe9ed2b1c024e7175586293fc3f49d6abde51636b6694dd2150b06aebc&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=20, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405640982.jpg?k=089aaefe9ed2b1c024e7175586293fc3f49d6abde51636b6694dd2150b06aebc&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=21, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405640982.jpg?k=089aaefe9ed2b1c024e7175586293fc3f49d6abde51636b6694dd2150b06aebc&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=22, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405640982.jpg?k=089aaefe9ed2b1c024e7175586293fc3f49d6abde51636b6694dd2150b06aebc&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=23, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405640982.jpg?k=089aaefe9ed2b1c024e7175586293fc3f49d6abde51636b6694dd2150b06aebc&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=24, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405640982.jpg?k=089aaefe9ed2b1c024e7175586293fc3f49d6abde51636b6694dd2150b06aebc&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=1, RoomId=25, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=1, RoomId=26, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=1, RoomId=27, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=1, RoomId=28, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.up },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            }
+        },
+        new BookingModel.RoomModel{
+            Floor=1, RoomId=29, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405641399.jpg?k=89af5d70a59ab8d7fac38d60a6d033fb40b8a95df6f81d5fab8b496af29b9867&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=30, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/250205365.jpg?k=0d8296400ca21b21e53f9accf6d9ec678751c5b70395b1b53bfc6eecfd6956d1&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=31, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/250205365.jpg?k=0d8296400ca21b21e53f9accf6d9ec678751c5b70395b1b53bfc6eecfd6956d1&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=32, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/250205365.jpg?k=0d8296400ca21b21e53f9accf6d9ec678751c5b70395b1b53bfc6eecfd6956d1&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=33, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/250205365.jpg?k=0d8296400ca21b21e53f9accf6d9ec678751c5b70395b1b53bfc6eecfd6956d1&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=2, RoomId=34, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down },
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/250205365.jpg?k=0d8296400ca21b21e53f9accf6d9ec678751c5b70395b1b53bfc6eecfd6956d1&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=3, RoomId=35, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405641399.jpg?k=89af5d70a59ab8d7fac38d60a6d033fb40b8a95df6f81d5fab8b496af29b9867&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=3, RoomId=36, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405641399.jpg?k=89af5d70a59ab8d7fac38d60a6d033fb40b8a95df6f81d5fab8b496af29b9867&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=3, RoomId=37, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405641399.jpg?k=89af5d70a59ab8d7fac38d60a6d033fb40b8a95df6f81d5fab8b496af29b9867&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=3, RoomId=38, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405641399.jpg?k=89af5d70a59ab8d7fac38d60a6d033fb40b8a95df6f81d5fab8b496af29b9867&o=&hp=1"
+        },
+        new BookingModel.RoomModel{
+            Floor=3, RoomId=39, Badroom=true,
+            BedList= new List<BookingModel.BedModel>()
+            {
+                new BookingModel.BedModel() {Busy=false, BedPlace = BookingModel.BedModel.Place.down }
+            },
+            RoomImgUrl="https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/405641399.jpg?k=89af5d70a59ab8d7fac38d60a6d033fb40b8a95df6f81d5fab8b496af29b9867&o=&hp=1"
+        }
+    };
+}

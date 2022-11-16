@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 559.22 229.03">
+  <defs>
+    <style>
+      .cls-1, .cls-2, .cls-3 {
+        fill: #fff;
+        stroke: #231f20;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-2, .cls-3, .cls-5, .cls-6 {
+        font-family: Arial-BoldMT, Arial;
+      }
+
+      .cls-2, .cls-5 {
+        font-size: 97.9px;
+      }
+
+      .cls-3, .cls-6 {
+        font-size: 99.26px;
+      }
+
+      .cls-7 {
+        letter-spacing: -.07em;
+      }
+
+      .cls-5, .cls-6, .cls-8 {
+        fill: #414042;
+      }
+
+      .cls-4 {
+        fill: none;
+        stroke: #ffde17;
+        stroke-width: 10px;
+      }
+
+      .cls-9 {
+        fill: #ffde17;
+      }
+    </style>
+  </defs>
+  <rect class="cls-4" x="5" y="5" width="549.22" height="213.41"/>
+  <rect class="cls-9" x="196.16" y=".26" width="11.37" height="221.31"/>
+  <rect class="cls-9" x="368.16" y=".26" width="11.37" height="221.31"/>
+  <rect class="cls-9" x="272.85" y="-221.09" width="11.37" height="551.37" transform="translate(333.13 -223.95) rotate(90)"/>
+  <rect class="cls-9" x="275.22" y="-108.01" width="11.37" height="548.78" transform="translate(447.28 -114.53) rotate(90)"/>
+  <g>
+    <text class="cls-6" transform="translate(7.34 109.56)"><tspan x="0" y="0">S</tspan><tspan class="cls-7" x="66.21" y="0">TA</tspan><tspan x="183.79" y="0">TION</tspan></text>
+    <text class="cls-3" transform="translate(13.82 105.19)"><tspan x="0" y="0">S</tspan><tspan class="cls-7" x="66.21" y="0">TA</tspan><tspan x="183.79" y="0">TION</tspan></text>
+  </g>
+  <g>
+    <path class="cls-8" d="M437.57,16.34l4.21,142.73,17.01,1.32-.82-29.37,54.05,3.87,1.9,74.95,16.86-5.87-4.26-181.22h-17.34s.79,31.16,.79,31.16l-54.25-3.61-.94-33.97h-17.22Zm72.81,53.33l.44,17.29-54.2-4.76-.47-16.89,54.23,4.35Zm-52.83,45.81l-.46-16.67,54.13,3.88,.42,16.45-54.09-3.66Z"/>
+    <path class="cls-1" d="M442.6,12.17l4.21,142.73,17.01,1.32-.82-29.37,54.05,3.87,1.9,74.95,16.86-5.87-4.26-181.22h-17.34s.79,31.16,.79,31.16l-54.25-3.61-.94-33.97h-17.22Zm72.81,53.33l.44,17.29-54.2-4.76-.47-16.89,54.23,4.35Zm-52.83,45.81l-.46-16.67,54.13,3.88,.42,16.45-54.09-3.66Z"/>
+  </g>
+  <g>
+    <text class="cls-5" transform="translate(128.38 192.17)"><tspan x="0" y="0">Hostel</tspan></text>
+    <text class="cls-2" transform="translate(134.44 189.9)"><tspan x="0" y="0">Hostel</tspan></text>
+  </g>
+</svg>
