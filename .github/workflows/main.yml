@@ -32,7 +32,7 @@ jobs:
       - name: Add .nojekyll file
         run: touch release/wwwroot/.nojekyll
       - name: Commit release to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.3.0
+        uses: JamesIves/github-pages-deploy-action@4.4
         with:
           BRANCH: gh-pages
           FOLDER: release/wwwroot
