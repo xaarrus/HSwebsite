@@ -17,12 +17,12 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       # sdk .net
       - name: Setup .NET 6
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.400'
+          dotnet-version: '6.0.x'
       - name: Publish .NET Core Project
         run: dotnet publish HSwebsite.sln -c Release --output release --nologo
 
@@ -32,7 +32,7 @@ jobs:
       - name: Add .nojekyll file
         run: touch release/wwwroot/.nojekyll
       - name: Commit release to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.4.1
+        uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
