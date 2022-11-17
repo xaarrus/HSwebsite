@@ -14,43 +14,43 @@
             <div id="filterCounterMembers">
 
                 <button class="btn btn-outline-primary" @onclick="(()=>FilterCounterSet(1))" title="Номер на одного человека">
-                    <img src="/img/man.svg" height="50">
+                    <img src="/HSwebsite/img/man.svg" height="50">
                 </button>
 
                 <button class="btn btn-outline-primary" @onclick="(()=>FilterCounterSet(2))" title="Номер до 2х человек">
-                    <img src="/img/man.svg" height="50" /><span>x2</span>
+                    <img src="/HSwebsite/img/man.svg" height="50" /><span>x2</span>
                 </button>
 
                 <button class="btn btn-outline-primary" @onclick="(()=>FilterCounterSet(3))" title="Номер до 3х человек">
-                    <img src="/img/man.svg" height="50" /><span>x3</span>
+                    <img src="/HSwebsite/img/man.svg" height="50" /><span>x3</span>
                  </button>
 
                 <button class="btn btn-outline-primary" @onclick="(()=>FilterCounterSet(4))" title="Номер до 4х человек">
-                    <img src="/img/man.svg" height="50" /><span>x4</span>
+                    <img src="/HSwebsite/img/man.svg" height="50" /><span>x4</span>
                 </button>
 
                 <button class="btn btn-outline-primary" @onclick="(()=>FilterCounterSet(6))" title="Номер до 6х человек">
-                    <img src="/img/man.svg" height="50" /><span>x6</span>
+                    <img src="/HSwebsite/img/man.svg" height="50" /><span>x6</span>
                 </button>
 
                 <button class="btn btn-outline-primary" @onclick="(()=>FilterCounterSet(8))" title="Номер до 8х человек">
-                    <img src="/img/man.svg" height="50" /><span>x8</span>
+                    <img src="/HSwebsite/img/man.svg" height="50" /><span>x8</span>
                 </button>
 
                 <button class=@cssFilterCheck(ref boolShower) title="Душ" @onclick="()=>FilterBool(ref boolShower)">
-                    <img src="/img/shower.svg" height="50" />
+                    <img src="/HSwebsite/img/shower.svg" height="50" />
                 </button>
 
                 <button class=@cssFilterCheck(ref boolBath) title="Ванна" @onclick="()=>FilterBool(ref boolBath)">
-                    <img src="/img/bath-shower-line.svg" height="50" />
+                    <img src="/HSwebsite/img/bath-shower-line.svg" height="50" />
                 </button>
 
                 <button class=@cssFilterCheck(ref boolBed) title="Одноместная кровать" @onclick="()=>FilterBool(ref boolBed)">
-                     <img src="/img/bed-outline.svg" height="50" />
+                     <img src="/HSwebsite/img/bed-outline.svg" height="50" />
                 </button>
 
                 <button class=@cssFilterCheck(ref boolBunkBed) title="Двухъярусная кровать" @onclick="()=>FilterBool(ref boolBunkBed)">
-                    <img src="/img/bunk-bed-outline.svg" height="50" />
+                    <img src="/HSwebsite/img/bunk-bed-outline.svg" height="50" />
                 </button>
             </div>
         </div>
@@ -73,13 +73,13 @@
                                 Room № @item.RoomId Floor: @item.Floor
                                 @if (item.Badroom == true & item.RoomId <= 34)
                                 {
-                                    <img src="/img/toilet.svg" height="50" title="Туалет" />
-                                    <img src="/img/shower.svg" height="50" title="Душ" />
+                                    <img src="/HSwebsite/img/toilet.svg" height="50" title="Туалет" />
+                                    <img src="/HSwebsite/img/shower.svg" height="50" title="Душ" />
                                 }
                                 @if (item.Badroom == true & item.RoomId > 34)
                                 {
-                                    <img src="/img/toilet.svg" height="50" title="Туалет" />
-                                    <img src="/img/bath-shower-line.svg" height="50" title="Ванна" />
+                                    <img src="/HSwebsite/img/toilet.svg" height="50" title="Туалет" />
+                                    <img src="/HSwebsite/img/bath-shower-line.svg" height="50" title="Ванна" />
                                 }
                                 @if (!item.Badroom)
                                 {
@@ -87,15 +87,15 @@
                                 }
                                 @if (item.BedList.Where(x => x.BedPlace == BookingModel.BedModel.Place.up).Count() > 0)
                                 {
-                                    <img src="/img/bunk-bed-outline.svg" height="50" title="Двухъярусная кровать" />
+                                    <img src="/HSwebsite/img/bunk-bed-outline.svg" height="50" title="Двухъярусная кровать" />
                                     if ((item.BedList.Where(x => x.BedPlace == BookingModel.BedModel.Place.up).Count()) % (item.BedList.Where(x => x.BedPlace == BookingModel.BedModel.Place.down).Count()) != 0)
                                     {
-                                        <img src="/img/bed-outline.svg" height="50" title="Одноместная кровать" />
+                                        <img src="/HSwebsite/img/bed-outline.svg" height="50" title="Одноместная кровать" />
                                     }
                                 }
                                 @if (item.BedList.Where(x => x.BedPlace == BookingModel.BedModel.Place.up).Count() < 1)
                                 {
-                                    <img src="/img/bed-outline.svg" height="50" title="Одноместная кровать" />
+                                    <img src="/HSwebsite/img/bed-outline.svg" height="50" title="Одноместная кровать" />
                                 }
                             </h5>
                             @if (!string.IsNullOrEmpty(item.RoomDescription))
